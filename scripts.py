@@ -12,6 +12,8 @@ def save_json(data, file_path):
 
 
 def save_csv(data, file_path):
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
     headers = [
         "alert_id",
         "location_title",
@@ -35,11 +37,11 @@ def get_data(url, headers, file_path):
             save_json(raw_data, file_path)
             return raw_data
         elif response.status_code == 401:
-            print()
+            raise ValueError("Invalid API token. Check your .secrets file.")
         elif response.status_code == 429:
-            print()
+            raise ValueError("Rate limit exceeded. Try again later.")
         else:
-            print()
+            raise ValueError(f"Unexpected status code: {response.status_code}")
     except requests.exceptions.Timeout:
         print("The request timed out")
     except requests.exceptions.RequestException as e:
@@ -56,7 +58,7 @@ def validate_alert(processed_alert):
     return True
 
 
-def get_active_alerts(alerts, collected_at):
+def transform_alerts(alerts, collected_at):
     processed_alerts = []
     for alert in alerts:
         processed_alert = {}
