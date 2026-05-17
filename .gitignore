@@ -2,6 +2,12 @@
 .secrets
 __pycache__/
 *.pyc
-data/raw/
-data/processed/
-logs/
+data/raw/*
+data/processed/*
+data/kafka_output/*
+logs/*
+
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/kafka_output/.gitkeep
+!data/logs/.gitkeep
