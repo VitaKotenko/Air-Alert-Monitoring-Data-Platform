@@ -22,8 +22,11 @@ services:
     volumes:
       - ./data/processed:/app/data/processed
       - ./kafka_producer.py:/app/kafka_producer.py
+      - ./scripts.py:/app/scripts.py
+      - ./requirements.txt:/app/requirements.txt
+      - ./logs:/app/logs
     working_dir: /app
-    command: sh -c "pip install kafka-python && python kafka_producer.py"
+    command: sh -c "pip install -r requirements.txt && sleep 15 && python kafka_producer.py"
 
   consumer:
     image: python:3.12
@@ -33,5 +36,8 @@ services:
     volumes:
       - ./data/kafka_output:/app/data/kafka_output
       - ./kafka_consumer.py:/app/kafka_consumer.py
+      - ./scripts.py:/app/scripts.py
+      - ./requirements.txt:/app/requirements.txt
+      - ./logs:/app/logs
     working_dir: /app
-    command: sh -c "pip install kafka-python && python kafka_consumer.py"
+    command: sh -c "pip install -r requirements.txt && sleep 15 && python kafka_consumer.py"

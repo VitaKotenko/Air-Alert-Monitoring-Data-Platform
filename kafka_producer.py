@@ -1,7 +1,11 @@
 import os
 import json
 import time
+import logging
 from kafka import KafkaProducer
+from scripts import setup_logging
+
+setup_logging("kafka.log")
 
 INPUT_FOLDER = "/app/data/processed"
 TOPIC_NAME = "air_alerts_files"
@@ -13,7 +17,7 @@ producer = KafkaProducer(
     ),
 )
 
-print("Kafka producer started...")
+logging.info("Kafka producer started...")
 
 while True:
     files = os.listdir(INPUT_FOLDER)

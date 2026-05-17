@@ -1,11 +1,14 @@
 import os
 import json
+import logging
 from kafka import KafkaConsumer
+from scripts import setup_logging
 
 OUTPUT_FOLDER = "/app/data/kafka_output"
 TOPIC_NAME = "air_alerts_files"
 
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+setup_logging("kafka.log")
 
 consumer = KafkaConsumer(
     TOPIC_NAME,
@@ -15,7 +18,7 @@ consumer = KafkaConsumer(
     value_deserializer=lambda value: json.loads(value.decode("utf-8")),
 )
 
-print("Kafka consumer started...")
+logging.info("Kafka consumer started...")
 
 for message in consumer:
     data = message.value
