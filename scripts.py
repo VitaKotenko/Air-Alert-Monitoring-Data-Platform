@@ -109,8 +109,7 @@ def save_processed_data(processed_data, json_file_path, csv_file_path):
     save_csv(processed_data, csv_file_path)
 
 
-def setup_logging():
-    log_file_name = "pipeline.log"
+def setup_logging(log_file_name="pipeline.log"):
     log_file_path = os.path.join("logs", log_file_name)
     logging.basicConfig(
         filename=log_file_path,
@@ -119,4 +118,5 @@ def setup_logging():
         encoding="utf-8",
         filemode="w",
         datefmt="%Y-%m-%d %H:%M:%S",
+        force=True,
     )
