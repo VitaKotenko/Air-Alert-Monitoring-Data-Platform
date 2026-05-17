@@ -8,7 +8,9 @@ OUTPUT_FOLDER = "/app/data/kafka_output"
 TOPIC_NAME = "air_alerts_files"
 
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
 setup_logging("kafka.log")
+logging.getLogger("kafka").setLevel(logging.WARNING)
 
 consumer = KafkaConsumer(
     TOPIC_NAME,
@@ -31,4 +33,4 @@ for message in consumer:
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(content)
 
-    print(f"File saved from Kafka: {filename}")
+    logging.info("File saved from Kafka: %s", filename)

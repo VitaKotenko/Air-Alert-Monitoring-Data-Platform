@@ -10,14 +10,15 @@ setup_logging("kafka.log")
 INPUT_FOLDER = "/app/data/processed"
 TOPIC_NAME = "air_alerts_files"
 
+logging.info("Kafka producer started...")
+logging.getLogger("kafka").setLevel(logging.WARNING)
+
 producer = KafkaProducer(
     bootstrap_servers="kafka:9092",
     value_serializer=lambda value: json.dumps(value, ensure_ascii=False).encode(
         "utf-8"
     ),
 )
-
-logging.info("Kafka producer started...")
 
 while True:
     files = os.listdir(INPUT_FOLDER)
@@ -26,17 +27,28 @@ while True:
         file_path = os.path.join(INPUT_FOLDER, filename)
 
         if os.path.isfile(file_path) and filename.endswith(".json"):
-            with open(file_path, "r", encoding="utf-8") as file:
-                content = file.read()
+            logging.info("New JSON file detected: %s", filename)
 
-            message = {"filename": filename, "content": content}
+            try:
+                with open(file_path, "r", encoding="utf-8") as file:
+                    content = file.read()
 
-            producer.send(TOPIC_NAME, value=message)
-            producer.flush()
+                message = {
+                    "filename": filename,
+                    "content": content,
+                }
 
-            print(f"File sent to Kafka: {filename}")
+                producer.send(TOPIC_NAME, value=message)
+                producer.flush()
 
-            processed_path = file_path + ".sent"
-            os.rename(file_path, processed_path)
+                logging.info("File sent to Kafka topic '%s': %s", TOPIC_NAME, filename)
+
+                sent_path = file_path + ".sent"
+                os.rename(file_path, sent_path)
+
+                logging.info("File marked as sent: %s", filename + ".sent")
+
+            except Exception as error:
+                logging.error("Error while sending file to Kafka: %s", error)
 
     time.sleep(5)
