@@ -41,3 +41,19 @@ services:
       - ./logs:/app/logs
     working_dir: /app
     command: sh -c "pip install -r requirements.txt && sleep 15 && python kafka_consumer.py"
+
+  postgres:
+    image: postgres:16
+    container_name: air_alerts_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
