@@ -120,3 +120,65 @@ def setup_logging(log_file_name="pipeline.log"):
         datefmt="%Y-%m-%d %H:%M:%S",
         force=True,
     )
+
+
+def get_history_data(region_uid, period, api_token, file_path):
+
+    url = f"https://api.alerts.in.ua/v1/regions/{region_uid}/alerts/{period}.json"
+
+    params = {"token": api_token}
+
+    try:
+        logging.info(
+            "Fetching historical alerts for region_uid=%s, period=%s",
+            region_uid,
+            period,
+        )
+
+        response = requests.get(url, params=params, timeout=30)
+
+        if response.status_code == 200:
+            raw_data = response.json()
+
+            logging.info(f"Saving historical raw data to {file_path}")
+            save_json(raw_data, file_path)
+
+            return raw_data
+
+        elif response.status_code == 401:
+            raise ValueError("Invalid API token. Check your .secrers file.")
+
+        elif response.status_code == 429:
+            raise ValueError("Rate limit exceeded. Try again later.")
+
+        else:
+            raise ValueError(f"Unexpected status code: {response.status_code}")
+
+    except requests.exceptions.Timeout:
+        logging.exception("The historical request timed out")
+        raise
+
+    except requests.exceptions.RequestException as e:
+        logging.exception(f"An error occurred during the historical request: {e}")
+        raise
+
+
+def transform_history_alerts(alerts, collected_at):
+
+    processed_alerts = []
+
+    for alert in alerts:
+        processed_alert = {
+            "alert_id": alert.get("id"),
+            "location_title": alert.get("location_title"),
+            "oblast": alert.get("location_oblast"),
+            "alert_type": alert.get("alert_type"),
+            "started_at": alert.get("started_at"),
+            "finished_at": alert.get("finished_at"),
+            "collected_at": collected_at,
+        }
+
+        validate_alert(processed_alert)
+        processed_alerts.append(processed_alert)
+
+    return processed_alerts

@@ -33,14 +33,20 @@ services:
     container_name: air_alerts_consumer
     depends_on:
       - kafka
+      - postgres
+    environment:
+      DB_HOST: postgres
     volumes:
       - ./data/kafka_output:/app/data/kafka_output
       - ./kafka_consumer.py:/app/kafka_consumer.py
       - ./scripts.py:/app/scripts.py
+      - ./db.py:/app/db.py
+      - ./repository.py:/app/repository.py
       - ./requirements.txt:/app/requirements.txt
+      - ./.secrets:/app/.secrets
       - ./logs:/app/logs
     working_dir: /app
-    command: sh -c "pip install -r requirements.txt && sleep 15 && python kafka_consumer.py"
+    command: sh -c "pip install -r requirements.txt && sleep 25 && python kafka_consumer.py"
 
   postgres:
     image: postgres:16
