@@ -182,3 +182,18 @@ def transform_history_alerts(alerts, collected_at):
         processed_alerts.append(processed_alert)
 
     return processed_alerts
+
+
+def print_query_result(title, rows):
+    print(f"\n{title}")
+    print("-" * 60)
+
+    if not rows:
+        print("No data found")
+        return
+
+    if isinstance(rows, list):
+        for row in rows:
+            print(row)
+    else:
+        print(rows)

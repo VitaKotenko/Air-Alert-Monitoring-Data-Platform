@@ -11,9 +11,18 @@ from scripts import (
     transform_history_alerts,
     save_processed_data,
     setup_logging,
+    print_query_result,
 )
 
 from repository import upsert_alert
+
+from queries import (
+    get_active_alerts,
+    was_alert_active,
+    count_alerts_by_region,
+    get_longest_alert,
+    get_top_5_regions,
+)
 
 
 def main():
@@ -67,7 +76,7 @@ def main():
         logging.info("Active alerts processed successfully")
 
         # Historical alerts
-        region_uid = 8
+        region_uid = 14
         period = "month_ago"
 
         history_raw_file_name = f"history_alerts_region_{region_uid}_{period}_raw.json"
@@ -120,6 +129,31 @@ def main():
             upsert_alert(alert)
 
         logging.info("Historical alerts loaded to PostgreSQL successfully")
+
+        logging.info("Running SQL analytics queries")
+
+        active_alerts = get_active_alerts()
+        print_query_result("Currently active alerts:", active_alerts)
+
+        region = "Луганська область"
+        check_time = "2026-05-24 13:00:00"
+
+        alert_status = was_alert_active(region, check_time)
+        print_query_result(
+            f"Was alert active in {region} at {check_time}?",
+            alert_status,
+        )
+
+        alerts_by_region = count_alerts_by_region()
+        print_query_result("Alerts count by region:", alerts_by_region)
+
+        longest_alert = get_longest_alert()
+        print_query_result("Longest finished alert:", longest_alert)
+
+        top_regions = get_top_5_regions()
+        print_query_result("Top 5 regions by alerts count:", top_regions)
+
+        logging.info("SQL analytics queries finished successfully")
 
         logging.info("Pipeline finished successfully")
 
