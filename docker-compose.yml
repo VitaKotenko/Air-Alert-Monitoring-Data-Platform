@@ -61,5 +61,24 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  spark:
+    image: apache/spark:3.5.6
+    container_name: air_alerts_spark
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./spark_processing.py:/app/spark_processing.py
+      - ./data/processed:/app/data/processed
+      - ./.secrets:/app/.secrets
+    working_dir: /app
+    command: sleep infinity
+
 volumes:
   postgres_data:
+
