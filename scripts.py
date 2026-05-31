@@ -3,6 +3,7 @@ import json
 import csv
 import requests
 import logging
+import subprocess
 
 
 def save_json(data, file_path):
@@ -109,19 +110,6 @@ def save_processed_data(processed_data, json_file_path, csv_file_path):
     save_csv(processed_data, csv_file_path)
 
 
-def setup_logging(log_file_name="pipeline.log"):
-    log_file_path = os.path.join("logs", log_file_name)
-    logging.basicConfig(
-        filename=log_file_path,
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        encoding="utf-8",
-        filemode="w",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        force=True,
-    )
-
-
 def get_history_data(region_uid, period, api_token, file_path):
 
     url = f"https://api.alerts.in.ua/v1/regions/{region_uid}/alerts/{period}.json"
@@ -197,3 +185,23 @@ def print_query_result(title, rows):
             print(row)
     else:
         print(rows)
+
+
+def run_spark_processing():
+    print("Starting Spark processing...")
+
+    command = [
+        "docker",
+        "compose",
+        "--env-file",
+        ".secrets",
+        "exec",
+        "-T",
+        "spark",
+        "/opt/spark/bin/spark-submit",
+        "/app/spark_processing.py",
+    ]
+
+    subprocess.run(command, check=True)
+
+    logging.info("Spark processing finished successfully")

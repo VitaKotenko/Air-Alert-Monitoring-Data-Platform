@@ -22,7 +22,7 @@ services:
     volumes:
       - ./data/processed:/app/data/processed
       - ./kafka_producer.py:/app/kafka_producer.py
-      - ./scripts.py:/app/scripts.py
+      - ./logging_config.py:/app/logging_config.py
       - ./requirements.txt:/app/requirements.txt
       - ./logs:/app/logs
     working_dir: /app
@@ -39,7 +39,7 @@ services:
     volumes:
       - ./data/kafka_output:/app/data/kafka_output
       - ./kafka_consumer.py:/app/kafka_consumer.py
-      - ./scripts.py:/app/scripts.py
+      - ./logging_config.py:/app/logging_config.py
       - ./db.py:/app/db.py
       - ./repository.py:/app/repository.py
       - ./requirements.txt:/app/requirements.txt
@@ -67,7 +67,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DB_HOST: ${DB_HOST}
+      DB_HOST: postgres
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -77,7 +77,9 @@ services:
       - ./data/processed:/app/data/processed
       - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
       - ./spark/ivycache:/opt/spark/ivycache:rw
+      - ./logging_config.py:/app/logging_config.py
       - ./.secrets:/app/.secrets
+      - ./logs:/app/logs
     working_dir: /app
     command: sleep infinity
 

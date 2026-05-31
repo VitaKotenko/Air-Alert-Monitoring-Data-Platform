@@ -3,7 +3,7 @@ import json
 import time
 import logging
 from kafka import KafkaProducer
-from scripts import setup_logging
+from logging_config import setup_logging
 
 setup_logging("kafka.log")
 

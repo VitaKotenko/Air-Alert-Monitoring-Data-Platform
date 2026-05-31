@@ -10,9 +10,11 @@ from scripts import (
     transform_alerts,
     transform_history_alerts,
     save_processed_data,
-    setup_logging,
     print_query_result,
+    run_spark_processing,
 )
+
+from logging_config import setup_logging
 
 from repository import upsert_alert
 
@@ -154,6 +156,8 @@ def main():
         print_query_result("Top 5 regions by alerts count:", top_regions)
 
         logging.info("SQL analytics queries finished successfully")
+
+        run_spark_processing()
 
         logging.info("Pipeline finished successfully")
 

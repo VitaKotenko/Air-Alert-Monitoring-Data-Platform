@@ -3,7 +3,7 @@ import json
 import logging
 from kafka import KafkaConsumer
 
-from scripts import setup_logging
+from logging_config import setup_logging
 from db import create_table
 from repository import upsert_alert
 
