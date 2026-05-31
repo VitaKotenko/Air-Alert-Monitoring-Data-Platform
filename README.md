@@ -3,7 +3,9 @@
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
 ![Kafka](https://img.shields.io/badge/Apache%20Kafka-4.1.2-black)
+![Spark](https://img.shields.io/badge/Apache%20Spark-4.1.2-orange)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue)
+![Parquet](https://img.shields.io/badge/Parquet-Output-lightgrey)
 ![CI](https://github.com/VitaKotenko/Air-Alert-Monitoring-Data-Platform/actions/workflows/python-ci.yml/badge.svg)
 
 ## Project Description
@@ -12,9 +14,11 @@ Air Alert Monitoring Data Platform is a Python-based data engineering project fo
 
 The project uses the alerts.in.ua API as a data source. It collects current active alerts, saves raw API responses, transforms the data into a structured format, and stores processed results as JSON and CSV files. Processed active alerts are sent to Apache Kafka and then consumed by a separate consumer service, which writes the data into PostgreSQL.
 
-The project also supports loading historical alert data for selected Ukrainian regions. Historical alerts are loaded from a separate API endpoint and merged into the PostgreSQL table using upsert logic. This allows the system to update existing alert records, especially when an alert receives a final `finished_at` timestamp.
+The project also supports loading historical alert data for selected Ukrainian regions. Historical alerts are loaded from a separate API endpoint and merged into the PostgreSQL table using upsert logic. This allows the system to update existing alert records, especially when an alert receives a final finished_at timestamp.
 
-The main goal of the project is to build a small end-to-end data pipeline that covers data ingestion, file processing, Kafka streaming, PostgreSQL persistence, and SQL-based analytics.
+The project includes a Spark processing layer. Spark reads alert records from PostgreSQL, separates active and inactive alerts, calculates alert duration for completed alerts, creates a regional summary report, and saves analytical outputs as Parquet datasets.
+
+The main goal of the project is to build a small end-to-end data pipeline that covers data ingestion, file processing, Kafka streaming, PostgreSQL persistence, Spark-based processing, Parquet output, and SQL-based analytics.
 
 ## Main Features
 
@@ -27,7 +31,10 @@ The main goal of the project is to build a small end-to-end data pipeline that c
 - Load historical alert data for selected regions.
 - Merge active and historical data using PostgreSQL upsert.
 - Run SQL analytics over stored alert records.
-- Use Docker Compose for PostgreSQL, Kafka, producer, consumer, and pipeline services.
+- Process PostgreSQL data using Apache Spark.
+- Create a regional report based on completed alerts.
+- Save Spark outputs as Parquet datasets.
+- Use Docker Compose for PostgreSQL, Kafka, producer, consumer, and Spark services.
 - Use logging for pipeline monitoring and debugging.
 
 ## Technologies Used
@@ -37,14 +44,17 @@ The main goal of the project is to build a small end-to-end data pipeline that c
 | Python 3.12 | Main programming language |
 | PostgreSQL 16 | Data storage and SQL analytics |
 | Apache Kafka 4.1.2 | Streaming processed alert files |
+| Apache Spark / PySpark 4.1.2 | Data processing and Parquet output |
 | Docker | Containerization |
 | Docker Compose | Running multi-container services |
 | psycopg2 | PostgreSQL connection from Python |
 | kafka-python | Kafka producer and consumer implementation |
 | requests | API requests |
 | python-dotenv | Loading environment variables from `.secrets` |
-| logging | Logging pipeline, producer, and consumer events |
+| logging | Logging pipeline, producer, consumer, and Spark processing events |
+| Parquet | Columnar storage format for analytical outputs |
 | GitHub Actions | CI pipeline on push to `main` |
+
 
 ## Current Architecture
 
@@ -123,3 +133,25 @@ PostgreSQL ON CONFLICT updates the existing record
         ↓
 finished_at is completed if available
 ```
+
+### Spark Processing Flow
+
+Spark reads data from the PostgreSQL air_alerts table and creates analytical Parquet outputs.
+```text
+PostgreSQL table: air_alerts
+        ↓
+spark_processing.py
+        ↓
+PySpark DataFrame
+        ↓
+Filter analytical records
+        ↓
+Split into active and inactive alerts
+        ↓
+Calculate duration for inactive alerts
+        ↓
+Group inactive alerts by oblast and alert_type
+        ↓
+Save Parquet outputs
+```
+
