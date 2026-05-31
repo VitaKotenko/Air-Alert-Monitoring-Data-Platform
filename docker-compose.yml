@@ -62,19 +62,21 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   spark:
-    image: apache/spark:3.5.6
+    image: spark:4.1.2-java21-python3
     container_name: air_alerts_spark
     depends_on:
       - postgres
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./spark_processing.py:/app/spark_processing.py
       - ./data/processed:/app/data/processed
+      - ./spark/conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+      - ./spark/ivycache:/opt/spark/ivycache:rw
       - ./.secrets:/app/.secrets
     working_dir: /app
     command: sleep infinity
