@@ -6,6 +6,7 @@ data/raw/*
 data/processed/*
 data/kafka_output/*
 logs/*
+spark/ivycache/
 
 !data/raw/.gitkeep
 !data/processed/.gitkeep

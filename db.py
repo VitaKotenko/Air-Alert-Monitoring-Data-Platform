@@ -38,8 +38,7 @@ def create_table():
 
     create_table_query = """
     CREATE TABLE IF NOT EXISTS air_alerts (
-        id SERIAL PRIMARY KEY,
-        alert_id TEXT UNIQUE NOT NULL,
+        alert_id TEXT PRIMARY KEY,
         location_title TEXT,
         oblast TEXT NOT NULL,
         alert_type TEXT,
