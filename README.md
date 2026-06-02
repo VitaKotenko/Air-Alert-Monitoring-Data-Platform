@@ -8,6 +8,8 @@
 ![Parquet](https://img.shields.io/badge/Parquet-Output-lightgrey)
 ![CI](https://github.com/VitaKotenko/Air-Alert-Monitoring-Data-Platform/actions/workflows/python-ci.yml/badge.svg)
 
+<img width="1672" height="941" alt="зображення" src="https://github.com/user-attachments/assets/fd3c0f12-8106-4435-adab-9dfaee5569dc" />
+
 ## Project Description
 
 Air Alert Monitoring Data Platform is a Python-based data engineering project for collecting, processing, streaming, storing, and analyzing air alert data in Ukraine.
