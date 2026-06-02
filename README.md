@@ -8,7 +8,7 @@
 ![Parquet](https://img.shields.io/badge/Parquet-Output-lightgrey)
 ![CI](https://github.com/VitaKotenko/Air-Alert-Monitoring-Data-Platform/actions/workflows/python-ci.yml/badge.svg)
 
-<img width="1672" height="941" alt="зображення" src="https://github.com/user-attachments/assets/fd3c0f12-8106-4435-adab-9dfaee5569dc" />
+<img width="1672" height="941" alt="" src="https://github.com/user-attachments/assets/1f2253b7-ef83-4bf2-a6e1-77c3fc16d5c5" />
 
 ## Project Description
 
